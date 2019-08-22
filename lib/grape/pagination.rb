@@ -42,10 +42,12 @@ module Grape
 
           enforce_max_per_page = options[:max_per_page] && options[:enforce_max_per_page]
           per_page_values = enforce_max_per_page ? 0..options[:max_per_page] : nil
+          page_values = options[:enforce_max_page] ? 0..1_000_000_000 : nil
 
           params do
             optional :page,     :type   => Integer, :default => 1,
-                                :desc   => 'Page of results to fetch.'
+                                :desc   => 'Page of results to fetch.',
+                                :values => page_values
             optional :per_page, :type   => Integer, :default => options[:per_page],
                                 :desc   => 'Number of results to return per page.',
                                 :values => per_page_values

@@ -80,10 +80,30 @@ describe NumbersAPI do
       end
 
       context 'with a max_per_page setting enforced' do
-        before { get '/numbers_with_enforced_max_per_page', :count => 100, :per_page => 30 }
+        before { get '/numbers_with_enforced_max_per_page', count: 100, per_page: 30 }
 
         it 'should not allow value above the max_per_page_limit' do
           body = '{"error":"per_page does not have a valid value"}'
+
+          expect(last_response.body).to eq(body)
+        end
+      end
+
+      context 'with a max_page setting enforced and respected' do
+        before { get '/numbers_with_enforced_max_page', count: 1e4, page: 1e4, per_page: 1 }
+
+        it 'should not allow value above the max_page_limit' do
+          body = '[10000]'
+
+          expect(last_response.body).to eq(body)
+        end
+      end
+
+      context 'with a max_page setting enforced and violated' do
+        before { get '/numbers_with_enforced_max_page', count: 100, page: 1e10, per_page: 20 }
+
+        it 'should not allow value above the max_page_limit' do
+          body = '{"error":"page does not have a valid value"}'
 
           expect(last_response.body).to eq(body)
         end
